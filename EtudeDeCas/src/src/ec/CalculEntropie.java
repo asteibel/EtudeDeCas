@@ -2,6 +2,7 @@ package src.ec;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -44,6 +45,10 @@ public class CalculEntropie {
 	 */
 	private int[][] mint;
 	
+	/**
+	 * Tableau des indices des personnes gain max
+	 */
+	ArrayList<Integer> indices = new ArrayList<Integer>();
 	/**
 	 * 
 	 * @param tableau Le tableau sur lequel calculer l'entropie
@@ -94,6 +99,8 @@ public class CalculEntropie {
 		
 		calculEntropieColonneSysteme();
 		calculGainInfoMax();
+		
+		complementarite();
 			
 			
 	}
@@ -181,10 +188,94 @@ public class CalculEntropie {
 		for(int i =0;i<n;i++){
 			if(tabGain[i]>gainMax){
 				gainMax=tabGain[i];
-				indice=i+1;
+				indice=i;
 			}
 		}
-		System.out.println("Le Gain max est de "+gainMax+" pour la personne n°"+indice);
+		System.out.println("Le Gain max est de "+gainMax+" pour la personne n°"+(indice+1));
+		indices.add(indice);
+	}
+	
+	public void complementarite(){
+		System.out.println("Calcul de la complémentarité");
+		
+		int indice = indices.get(0);
+		
+		double[][] mat1 = new double[n][m];//p1 et pi
+		double[][] mat2 = new double[n][m];//non (pi et p1)
+		double[][] mat3 = new double[n][m];
+		double[][] mat4 = new double[n][m];
+		double[][] mat5 = new double[n][m];
+		double[][] mat6 = new double[n][m];
+		double[][] mat7 = new double[n][m];
+		double[][] mat8 = new double[n][m];
+		
+		double[] tabComp = new double[n];
+		
+		for(int i =0;i<n;i++){
+			if(i!=indice)
+				for(int j=0;j<m;j++){
+					double a=(double)mint[i][j]+mint[indice][j];
+					double b=(double)nombreDePresenceLigne[indice]+nombreDePresenceLigne[i];
+					double c=(double)mint[indice][j]-mint[i][j];
+					double d=(double)nombreDePresenceLigne[indice]-nombreDePresenceLigne[i];
+					
+					if(mint[indice][j]==1&&mint[i][j]==1){
+						mat1[i][j]=a*Math.log(a/b)/b;
+						mat2[i][j]=0;
+					}
+					else{
+						mat1[i][j]=0;
+						mat2[i][j]=(1-a/b)*Math.log(1-a/b);
+					}
+					if(mint[indice][j]==1&&mint[i][j]==0){
+						mat3[i][j]=(1+c)/(m+d)*Math.log((1+c)/(m+d));
+						mat4[i][j]=0;
+					}
+					else{
+						mat3[i][j]=0;
+						mat4[i][j]=(1-(1+c)/(m+d))*Math.log(1-(1+c)/(m+d));
+					}
+					if(mint[i][j]==1&&mint[indice][j]==0){
+						mat5[i][j]=(1-c)/(m-d)*Math.log((1-c)/(m-d));
+						mat6[i][j]=0;
+					}
+					else{
+						mat5[i][j]=0;
+						mat6[i][j]=(1-(1-c)/(m-d))*Math.log(1-(1-c)/(m-d));						
+					}
+					if(mint[i][j]==0&&mint[indice][j]==0){
+						mat7[i][j]=(2-a)/(2*m-b)*Math.log((2-a)/(2*m-b));
+						mat8[i][j]=0;
+					}
+					else{
+						mat7[i][j]=0;
+						mat8[i][j]=(1-(2-a)/(2*m-b))*Math.log((1-(2-a)/(2*m-b)));
+					}
+						
+					tabComp[i]=0;
+			
+		}
+						
+						
+			}
+		
+		System.out.println(afficherMatriceDouble(mat1));
+		System.out.println("  ");
+		System.out.println(afficherMatriceDouble(mat2));
+		System.out.println("  ");
+		System.out.println(afficherMatriceDouble(mat3));
+		System.out.println("  ");
+		System.out.println(afficherMatriceDouble(mat4));
+
+		System.out.println(afficherMatriceDouble(mat5));
+		System.out.println("  ");
+		System.out.println(afficherMatriceDouble(mat6));
+		System.out.println("  ");
+		System.out.println(afficherMatriceDouble(mat7));
+		System.out.println("  ");
+		System.out.println(afficherMatriceDouble(mat8));
+		
+		
 	}
 	
 	/**
