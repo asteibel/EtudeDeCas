@@ -24,12 +24,16 @@ public class CalculEntropie {
 	/**
 	 * Pour chaque individu, son nombre de présence aux évènements
 	 */
-	int[] nombreDePresence;
+	int[] nombreDePresenceLigne;
 	/**
 	 * Total de présence de tous les individus 
 	 */
 	int nombreTotalDePresence;
 	
+	/**
+	 * Pour chaque ev, combien de personne sont venus
+	 */
+	int[] nombreDePresenceColonne;
 	/**
 	 * Entropie du système
 	 */
@@ -62,34 +66,47 @@ public class CalculEntropie {
 		
 		System.out.println("Calcul du nombre de présence");
 		
-		nombreDePresence=new int[n];
+		nombreDePresenceLigne=new int[n];
+		nombreDePresenceColonne =new int[m];
 		nombreTotalDePresence=0;
 		for(int i =0;i<n;i++){
 			int c = 0;
 			for(int j=0;j<m;j++)
 				if(tableau.getPresence()[i][j])
 					c++;
-			nombreDePresence[i]=c;
-			nombreTotalDePresence+=nombreDePresence[i];
+			nombreDePresenceLigne[i]=c;
+			
+			nombreTotalDePresence+=nombreDePresenceLigne[i];
 			
 		}
-		System.out.println(afficherTableauInt(nombreDePresence));
+		for(int i =0;i<m;i++){
+			int c = 0;
+			for(int j=0;j<n;j++)
+				if(tableau.getPresence()[j][i])
+					c++;
+			nombreDePresenceColonne[i]=c;
+			
+			
+		}
+		System.out.println(afficherTableauInt(nombreDePresenceColonne));
+		System.out.println(afficherTableauInt(nombreDePresenceLigne));
 		System.out.println(nombreTotalDePresence +" <= nombre total de présence");
 		
-		calculEntropieSysteme();
+		calculEntropieColonneSysteme();
+		calculGainInfoMax();
 			
 			
 	}
 	
-	public void calculEntropieSysteme(){
-		double[] tabEntropie = new double[nombreDePresence.length];
+	public void calculEntropieLigneSysteme(){
+		double[] tabEntropie = new double[nombreDePresenceLigne.length];
 		System.out.println("Calcul entropie personnes");
 		for(int i =0;i<tabEntropie.length;i++){
-			double p = (double)nombreDePresence[i];
-			double r = ((double)nombreDePresence[i])/nombreTotalDePresence;
+			double p = (double)nombreDePresenceLigne[i];
+			double r = ((double)nombreDePresenceLigne[i])/nombreTotalDePresence;
 			double logr = Math.log10(r);
 			double plogr = p*logr/nombreTotalDePresence;
-			double logp = Math.log10(nombreDePresence.length);
+			double logp = Math.log10(nombreDePresenceLigne.length);
 			tabEntropie[i]=-plogr/logp;
 			}
 		System.out.println("Tableau de l'entropie des individus");
@@ -100,6 +117,76 @@ public class CalculEntropie {
 			SSysteme+=tabEntropie[i];
 		System.out.println("Entropie système "+SSysteme);
 	}
+	
+	public void calculEntropieColonneSysteme(){
+		double[] tabEntropie = new double[nombreDePresenceColonne.length];
+		System.out.println("Calcul entropie personnes");
+		for(int i =0;i<m;i++){
+			double p = (double)nombreDePresenceColonne[i];
+			double r = ((double)nombreDePresenceColonne[i])/nombreTotalDePresence;
+			double logr = Math.log10(r);
+			double plogr = p*logr/nombreTotalDePresence;
+			double logp = Math.log10(nombreDePresenceColonne.length);
+			tabEntropie[i]=-plogr/logp;
+			}
+		System.out.println("Tableau de l'entropie des évènements");
+		System.out.println(afficherTableauDouble(tabEntropie));
+		
+		SSysteme=0.0;
+		for(int i =0;i<tabEntropie.length;i++)
+			SSysteme+=tabEntropie[i];
+		System.out.println("Entropie système "+SSysteme);
+	}
+	
+	public void calculGainInfoMax(){
+		double[][] matGainP = new double[n][m];
+		double[][] matGainN = new double[n][m];
+		
+		for(int i =0;i<n;i++)
+			for(int j=0;j<m;j++){
+				if (mint[i][j]==0){
+					double c =(double) 1/(m-nombreDePresenceLigne[i]);
+					matGainN[i][j]=c*Math.log(c);
+				}
+					
+				else{
+					double a = (double)mint[i][j];
+					double b=Math.log(((double)mint[i][j])/((double)nombreDePresenceLigne[i]));
+					matGainP[i][j]=a*b/((double)nombreDePresenceLigne[i]);
+					
+				}
+						}
+		System.out.println("Matrice des gains d'informations");
+		System.out.println(afficherMatriceDouble(matGainP));
+		System.out.println(afficherMatriceDouble(matGainN));
+		
+		double[] tabGainSommeP = new double[n];
+		double[] tabGainSommeN = new double[n];
+		for(int i =0;i<n;i++){
+			tabGainSommeP[i]=0;
+			tabGainSommeN[i]=0;
+			for(int j=0;j<m;j++){
+				tabGainSommeP[i]+=((double)nombreDePresenceLigne[i])/((double)nombreTotalDePresence)*matGainP[i][j]/Math.log(m);
+				tabGainSommeN[i]+=((double)(nombreTotalDePresence-nombreDePresenceLigne[i]))/((double)nombreTotalDePresence)*matGainN[i][j]/Math.log(m);
+			}
+				
+		}
+		double[] tabGain =new double[n];
+		for(int i =0;i<n;i++)
+			tabGain[i]=SSysteme+tabGainSommeP[i]+tabGainSommeN[i];
+		System.out.println("Tableau des gain d'information");
+		System.out.println(afficherTableauDouble(tabGain));
+		double gainMax=0;
+		int indice=0;
+		for(int i =0;i<n;i++){
+			if(tabGain[i]>gainMax){
+				gainMax=tabGain[i];
+				indice=i+1;
+			}
+		}
+		System.out.println("Le Gain max est de "+gainMax+" pour la personne n°"+indice);
+	}
+	
 	/**
 	public void matriceEntropie(){
 
