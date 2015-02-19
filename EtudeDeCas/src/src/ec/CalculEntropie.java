@@ -49,6 +49,12 @@ public class CalculEntropie {
 	 * Tableau des indices des personnes gain max
 	 */
 	ArrayList<Integer> indices = new ArrayList<Integer>();
+	
+	/**
+	 * Tableau des complémentarités
+	 */
+	double[] tabComp;
+	
 	/**
 	 * 
 	 * @param tableau Le tableau sur lequel calculer l'entropie
@@ -99,8 +105,16 @@ public class CalculEntropie {
 		
 		calculEntropieColonneSysteme();
 		calculGainInfoMax();
-		
 		complementarite();
+		for(int i =1;i<n;i++)
+			if(!arret())
+				complementarite();
+			else
+				System.out.println("Condition d'arrêt vérifiée!");
+		
+		
+		for(int i=0;i<indices.size();i++)
+			System.out.println(indices.get(i)+1);
 			
 			
 	}
@@ -183,22 +197,25 @@ public class CalculEntropie {
 			tabGain[i]=SSysteme+tabGainSommeP[i]+tabGainSommeN[i];
 		System.out.println("Tableau des gain d'information");
 		System.out.println(afficherTableauDouble(tabGain));
-		double gainMax=0;
+		trouverMax(tabGain);
+	}
+	
+	public void trouverMax(double[] tab){
+		double max=0;
 		int indice=0;
 		for(int i =0;i<n;i++){
-			if(tabGain[i]>gainMax){
-				gainMax=tabGain[i];
+			if(tab[i]>max){
+				max=tab[i];
 				indice=i;
 			}
 		}
-		System.out.println("Le Gain max est de "+gainMax+" pour la personne n°"+(indice+1));
+		System.out.println("Le Gain max est de "+max+" pour la personne n°"+(indice+1));
 		indices.add(indice);
+		
 	}
 	
 	public void complementarite(){
 		System.out.println("Calcul de la complémentarité");
-		
-		int indice = indices.get(0);
 		
 		double[][] mat1 = new double[n][m];//p1 et pi
 		double[][] mat2 = new double[n][m];//non (pi et p1)
@@ -208,18 +225,40 @@ public class CalculEntropie {
 		double[][] mat6 = new double[n][m];
 		double[][] mat7 = new double[n][m];
 		double[][] mat8 = new double[n][m];
+		double[] tab1 = new double[n];
+		double[] tab2 = new double[n];
+		double[] tab3 = new double[n];
+		double[] tab4 = new double[n];
+		double[] tab5 = new double[n];
+		double[] tab6 = new double[n];
+		double[] tab7 = new double[n];
+		double[] tab8 = new double[n];
 		
-		double[] tabComp = new double[n];
+		tabComp = new double[n];
 		
 		for(int i =0;i<n;i++){
-			if(i!=indice)
+			if(!indices.contains(i))
 				for(int j=0;j<m;j++){
-					double a=(double)mint[i][j]+mint[indice][j];
-					double b=(double)nombreDePresenceLigne[indice]+nombreDePresenceLigne[i];
-					double c=(double)mint[indice][j]-mint[i][j];
-					double d=(double)nombreDePresenceLigne[indice]-nombreDePresenceLigne[i];
+					double a=(double)mint[i][j];
+					double b=(double)nombreDePresenceLigne[i];
+					double c=(double)1-mint[i][j];
+					double d=(double)-nombreDePresenceLigne[i];
+					double e=(double)mint[i][j];
+					double f=(double)nombreDePresenceLigne[i];
+					double g=(double)1-mint[i][j];
+					double h=(double)14-nombreDePresenceLigne[i];
+					for(int k=0;k<indices.size();k++){
+						a+=(double)mint[indices.get(k)][j];
+						b+=(double)nombreDePresenceLigne[indices.get(k)];
+						c+=(double)mint[indices.get(k)][j];
+						d+=(double)nombreDePresenceLigne[indices.get(k)];
+						e+=(double)1-mint[indices.get(k)][j];
+						f+=(double)14-nombreDePresenceLigne[indices.get(k)];
+						g+=(double)1-mint[indices.get(k)][j];
+						h+=(double)14-nombreDePresenceLigne[indices.get(k)];
+					}
 					
-					if(mint[indice][j]==1&&mint[i][j]==1){
+					if(presence(indices,j)&&mint[i][j]==1){
 						mat1[i][j]=a*Math.log(a/b)/b;
 						mat2[i][j]=0;
 					}
@@ -227,37 +266,66 @@ public class CalculEntropie {
 						mat1[i][j]=0;
 						mat2[i][j]=(1-a/b)*Math.log(1-a/b);
 					}
-					if(mint[indice][j]==1&&mint[i][j]==0){
-						mat3[i][j]=(1+c)/(m+d)*Math.log((1+c)/(m+d));
+					if(presence(indices,j)&&mint[i][j]==0){
+						mat3[i][j]=c/(m+d)*Math.log(c/(m+d));
 						mat4[i][j]=0;
 					}
 					else{
 						mat3[i][j]=0;
-						mat4[i][j]=(1-(1+c)/(m+d))*Math.log(1-(1+c)/(m+d));
+						mat4[i][j]=(1-c/(m+d))*Math.log(1-c/(m+d));
 					}
-					if(mint[i][j]==1&&mint[indice][j]==0){
-						mat5[i][j]=(1-c)/(m-d)*Math.log((1-c)/(m-d));
+					if(mint[i][j]==1&&!presence(indices,j)){
+						mat5[i][j]=e/f*Math.log(e/f);
 						mat6[i][j]=0;
 					}
 					else{
 						mat5[i][j]=0;
-						mat6[i][j]=(1-(1-c)/(m-d))*Math.log(1-(1-c)/(m-d));						
+						mat6[i][j]=(1-e/f)*Math.log(1-e/f);						
 					}
-					if(mint[i][j]==0&&mint[indice][j]==0){
-						mat7[i][j]=(2-a)/(2*m-b)*Math.log((2-a)/(2*m-b));
+					if(mint[i][j]==0&&!presence(indices,j)){
+						mat7[i][j]=(g/h)*Math.log(g/h);
 						mat8[i][j]=0;
 					}
 					else{
 						mat7[i][j]=0;
-						mat8[i][j]=(1-(2-a)/(2*m-b))*Math.log((1-(2-a)/(2*m-b)));
+						mat8[i][j]=(1-g/h)*Math.log((1-g/h));
 					}
 						
 					tabComp[i]=0;
 			
-		}
+					}
 						
-						
+			for(int j=0;j<m;j++){
+				
+				double a=(double)nombreDePresenceLigne[i];
+				double b=(double)14-nombreDePresenceLigne[i];
+				double c=(double)nombreDePresenceLigne[i];
+				double d=(double)14-nombreDePresenceLigne[i];
+				for(int k=0;k<indices.size();k++){
+						a+=(double)nombreDePresenceLigne[indices.get(k)];
+						b+=(double)nombreDePresenceLigne[indices.get(k)];
+						c+=(double)14-nombreDePresenceLigne[indices.get(k)];
+						d+=(double)14-nombreDePresenceLigne[indices.get(k)];
+				}
+				a=a/((double)nombreTotalDePresence);
+				b=b/((double)nombreTotalDePresence);
+				c=c/((double)nombreTotalDePresence);
+				d=d/((double)nombreTotalDePresence);
+				
+				tab1[i]+=a*mat1[i][j]/Math.log(m);
+				tab2[i]+=(1-a)*mat2[i][j]/Math.log(m);
+				tab3[i]+=b*mat3[i][j]/Math.log(m);
+				tab4[i]+=(1-b)*mat4[i][j]/Math.log(m);
+				tab5[i]+=c*mat5[i][j]/Math.log(m);
+				tab6[i]+=(1-c)*mat6[i][j]/Math.log(m);
+				tab7[i]+=d*mat7[i][j]/Math.log(m);
+				tab8[i]+=(1-d)*mat8[i][j]/Math.log(m);
 			}
+			tabComp[i]=tab3[i]+tab4[i]+tab5[i]+tab6[i]-tab1[i]-tab2[i]-tab7[i]-tab8[i];
+			
+			}
+		
+		
 		
 		System.out.println(afficherMatriceDouble(mat1));
 		System.out.println("  ");
@@ -274,8 +342,33 @@ public class CalculEntropie {
 		System.out.println(afficherMatriceDouble(mat7));
 		System.out.println("  ");
 		System.out.println(afficherMatriceDouble(mat8));
+		/**
+		System.out.println(afficherTableauDouble(tab5));
+		System.out.println(afficherTableauDouble(tab6));
+		System.out.println(afficherTableauDouble(tab7));
+		System.out.println(afficherTableauDouble(tab8));*/
 		
-		
+		System.out.println(afficherTableauDouble(tabComp));
+		trouverMax(tabComp);
+	}
+	
+	public boolean presence(ArrayList<Integer> indices,int j){
+		for(int i=0;i<indices.size();i++){
+				if(mint[indices.get(i)][j]==0)
+					return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Détermine si la condition d'arrêt toutes les complémentarités négatives ou nulles est vérifié
+	 * @return
+	 */
+	public boolean arret(){
+		for(int i =0;i<n;i++)
+			if(tabComp[i]>0)
+				return false;
+		return true;
 	}
 	
 	/**
