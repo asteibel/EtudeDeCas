@@ -326,7 +326,7 @@ public class CalculEntropie {
 			}
 		
 		
-		
+		/**
 		System.out.println(afficherMatriceDouble(mat1));
 		System.out.println("  ");
 		System.out.println(afficherMatriceDouble(mat2));
