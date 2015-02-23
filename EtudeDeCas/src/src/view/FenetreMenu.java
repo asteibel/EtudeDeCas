@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import src.ec.ReadCSV;
 
 public class FenetreMenu extends JFrame{
 	
@@ -36,6 +39,7 @@ public class FenetreMenu extends JFrame{
 		
 		boutonDemarrer();
 		boutonWE();
+		boutonChargerCSV();
 		
 		pack();
 	}
@@ -59,6 +63,32 @@ public class FenetreMenu extends JFrame{
 		this.add(bDemarrer,bl.SOUTH);
 		this.setVisible(false);
 		
+	}
+	
+	public void boutonChargerCSV(){
+		JButton bCSV = new JButton("Charger un CSV");
+		bCSV.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				Scanner sc = new Scanner(System.in);
+				System.out.println("Combien y'a t'il de personnes?");
+				int n = sc.nextInt();
+				System.out.println("Combien y'a-t-il d'évènements?");
+				int m =sc.nextInt();
+				ReadCSV csv = new ReadCSV(n,m);
+				int[][] tab = csv.run();
+				
+				fermerTabEv();
+				TableauEvenement test = new TableauEvenement();
+				tabEv = test.lancerCSV(tab);
+				lancerFenetreCalcul(tabEv);
+				
+			}
+		});
+		this.add(bCSV,bl.EAST);
+		this.setVisible(false);
 	}
 	
 	public void boutonWE(){

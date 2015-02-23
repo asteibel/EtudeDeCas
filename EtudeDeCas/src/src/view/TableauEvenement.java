@@ -26,6 +26,13 @@ public class TableauEvenement {
 		
 	}
 	
+	public TableauEvenement lancerCSV(int[][] tab){
+		tabUI.chargerCSV(tab);
+		tabUI.paint();
+		tabUI.setVisible(true);
+		return this;
+	}
+	
 	public TableauEvenement lancerWE(){
 		tabUI.chargerWE();
 		tabUI.paint();

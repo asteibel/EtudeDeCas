@@ -82,6 +82,27 @@ public class Tableau {
 		this.presence = presence;
 	}
 	
+	public void chargerCSV(int[][] tab){
+		initialisation(tab.length, tab[0].length);
+		
+		String[] listeEvenements= new String[m];
+		String[] listeIndividus=new String[n];
+		
+		for(int i =0;i<n;i++){
+			for(int j=0;j<m;j++)
+				if(tab[i][j]==0)
+					presence[i][j]=false;
+				else
+					presence[i][j]=true;
+			listeIndividus[i]=String.valueOf((i+1));
+		}
+		for(int i=0;i<m;i++)
+			listeEvenements[i]=String.valueOf(i+1);
+		this.listeEvenements=listeEvenements;
+		this.listeIndividus=listeIndividus;
+			
+			
+	}
 	
 	public void chargerWE(){
 		initialisation(18, 14);

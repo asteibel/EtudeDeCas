@@ -36,6 +36,13 @@ public class TableauUI extends JFrame{
 		pack();
 	
 	}
+	
+	public void chargerCSV(int[][] tab){
+		n=tab.length;
+		m=tab[0].length;
+		this.tab.chargerCSV(tab);
+		
+	}
 
 	public void paint(){
 		/**
