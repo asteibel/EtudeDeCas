@@ -25,11 +25,14 @@ public class TableauEvenement {
 		return this;
 		
 	}
-	
-	public TableauEvenement lancerCSV(int[][] tab){
-		tabUI.chargerCSV(tab);
+	public void afficherTableau(){
 		tabUI.paint();
 		tabUI.setVisible(true);
+	}
+	public TableauEvenement lancerCSV(int[][] tab){
+		tabUI.chargerCSV(tab);
+		//tabUI.paint();
+		//tabUI.setVisible(true);
 		return this;
 	}
 	

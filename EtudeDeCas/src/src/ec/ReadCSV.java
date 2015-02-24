@@ -10,9 +10,15 @@ public class ReadCSV {
 	int n;
 	int m;
 	
+	String path;
+	
 	public ReadCSV(int n, int m){
 		this.m=m;
 		this.n=n;
+	}
+	
+	public ReadCSV(String path){
+		this.path=path;
 	}
 	
 	public int[][] run(){
@@ -20,30 +26,35 @@ public class ReadCSV {
 		BufferedReader br = null;
 		String line ="";
 		String split=";";
-		
-		int[][] tab = new int[n][m];
-		
+		int[][] tab;
 		try{
-			br = new BufferedReader(new FileReader(csvFile));
-			int compteur = 0;
+			System.out.println("1");
+			br = new BufferedReader(new FileReader(path));
+			System.out.println("2");
+			int compteur = 1;
+			String[] personne = br.readLine().split(split);
+			while((line = br.readLine())!=null)
+				compteur++;				
+			tab = new int[compteur][personne.length];
+			System.out.println(compteur+";"+personne.length);
+			
+			
+			br = new BufferedReader(new FileReader(path));
+			compteur = 0;
 			while((line = br.readLine())!=null){
-				String[] personne = line.split(split);
-				for(int i =0;i<m;i++){
-					tab[compteur][i]=Integer.parseInt(personne[i]);
+				personne = line.split(split);
+				for(int i =0;i<tab[0].length;i++){
+					if(Integer.parseInt(personne[i])==1)
+						tab[compteur][i]=1;
+					else
+						tab[compteur][i]=0;
 				}
 				compteur++;				
 			}
-			/**
-			String s = "";
-			for(int i =0;i<tab.length;i++){
-				for(int j=0;j<tab[0].length;j++)
-					s+=tab[i][j]+" ";
-				s+="\n";
-			}
-			System.out.println(s);*/
 		}
 		catch(Exception e){
-			System.out.println("Fichier non trouvé, vérifiez l'adresse "+csvFile);
+			tab=new int[0][0];
+			System.out.println("Erreur de chargement du fichier ");
 		}
 		return tab;
 	}

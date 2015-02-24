@@ -9,6 +9,7 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import src.ec.ReadCSV;
 
@@ -16,9 +17,10 @@ public class FenetreMenu extends JFrame{
 	
 	/**
 	 * Layout du menu
-	 * Centre : texte
-	 * Haut : bouton WE
-	 * Bas : bouton lancer nouveau tableau
+	 * Haut : texte
+	 * West : WE
+	 * Haut : démarer
+	 * Bas : charger csv
 	 */
 	BorderLayout bl;
 	/**
@@ -26,22 +28,26 @@ public class FenetreMenu extends JFrame{
 	 */
 	TableauEvenement tabEv;
 	
+	FenetreMenu menu;
+	
 	public FenetreMenu(){
 		super();
 		
 		setTitle("Menu");
-		setPreferredSize(new Dimension(200,150));
+		setPreferredSize(new Dimension(400,150));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		bl = new BorderLayout();
 		
-		this.add(new JLabel("Calcul de la complémentarité"),bl.CENTER);
+		this.add(new JLabel("Calcul de la complémentarité",SwingConstants.CENTER),bl.NORTH);
 		
 		boutonDemarrer();
 		boutonWE();
 		boutonChargerCSV();
 		
 		pack();
+		
+		this.menu=this;
 	}
 	
 	public void boutonDemarrer(){
@@ -60,7 +66,7 @@ public class FenetreMenu extends JFrame{
 			}
 		});
 		
-		this.add(bDemarrer,bl.SOUTH);
+		this.add(bDemarrer,bl.CENTER);
 		this.setVisible(false);
 		
 	}
@@ -72,6 +78,9 @@ public class FenetreMenu extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				
+				/**
+				
 				Scanner sc = new Scanner(System.in);
 				System.out.println("Combien y'a t'il de personnes?");
 				int n = sc.nextInt();
@@ -83,7 +92,8 @@ public class FenetreMenu extends JFrame{
 				fermerTabEv();
 				TableauEvenement test = new TableauEvenement();
 				tabEv = test.lancerCSV(tab);
-				lancerFenetreCalcul(tabEv);
+				lancerFenetreCalcul(tabEv);*/
+				FenetreDrop drop = new FenetreDrop(menu);
 				
 			}
 		});
@@ -104,7 +114,7 @@ public class FenetreMenu extends JFrame{
 				lancerFenetreCalcul(tabEv);
 			}
 		});
-		this.add(bWE,bl.NORTH);
+		this.add(bWE,bl.WEST);
 		this.setVisible(false);
 	}
 	
