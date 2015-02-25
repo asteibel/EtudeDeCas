@@ -28,15 +28,12 @@ public class ReadCSV {
 		String split=";";
 		int[][] tab;
 		try{
-			System.out.println("1");
 			br = new BufferedReader(new FileReader(path));
-			System.out.println("2");
 			int compteur = 1;
 			String[] personne = br.readLine().split(split);
 			while((line = br.readLine())!=null)
 				compteur++;				
 			tab = new int[compteur][personne.length];
-			System.out.println(compteur+";"+personne.length);
 			
 			
 			br = new BufferedReader(new FileReader(path));

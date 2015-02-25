@@ -107,12 +107,15 @@ public class CalculEntropie {
 		calculGainInfoMax();
 		complementarite();
 		for(int i =1;i<n;i++)
-			if(!arret())
+			if(!arret()&&!arretCouvertureTotale())
 				complementarite();
-			else
+			else{
 				System.out.println("Condition d'arrêt vérifiée!");
+				break;
+			}
+				
 		
-		
+		System.out.println("Personnes sélectionnées");
 		for(int i=0;i<indices.size();i++)
 			System.out.println(indices.get(i)+1);
 			
@@ -215,7 +218,7 @@ public class CalculEntropie {
 	}
 	
 	public void complementarite(){
-		System.out.println("Calcul de la complémentarité");
+		System.out.println("Calcul de la complémentarité avec "+indices.size()+" personnes sélectionnées");
 		
 		double[][] mat1 = new double[n][m];//p1 et pi
 		double[][] mat2 = new double[n][m];//non (pi et p1)
@@ -246,16 +249,16 @@ public class CalculEntropie {
 					double e=(double)mint[i][j];
 					double f=(double)nombreDePresenceLigne[i];
 					double g=(double)1-mint[i][j];
-					double h=(double)14-nombreDePresenceLigne[i];
+					double h=(double)m-nombreDePresenceLigne[i];
 					for(int k=0;k<indices.size();k++){
 						a+=(double)mint[indices.get(k)][j];
 						b+=(double)nombreDePresenceLigne[indices.get(k)];
 						c+=(double)mint[indices.get(k)][j];
 						d+=(double)nombreDePresenceLigne[indices.get(k)];
 						e+=(double)1-mint[indices.get(k)][j];
-						f+=(double)14-nombreDePresenceLigne[indices.get(k)];
+						f+=(double)m-nombreDePresenceLigne[indices.get(k)];
 						g+=(double)1-mint[indices.get(k)][j];
-						h+=(double)14-nombreDePresenceLigne[indices.get(k)];
+						h+=(double)m-nombreDePresenceLigne[indices.get(k)];
 					}
 					
 					if(presence(indices,j)&&mint[i][j]==1){
@@ -298,14 +301,14 @@ public class CalculEntropie {
 			for(int j=0;j<m;j++){
 				
 				double a=(double)nombreDePresenceLigne[i];
-				double b=(double)14-nombreDePresenceLigne[i];
+				double b=(double)m-nombreDePresenceLigne[i];
 				double c=(double)nombreDePresenceLigne[i];
-				double d=(double)14-nombreDePresenceLigne[i];
+				double d=(double)m-nombreDePresenceLigne[i];
 				for(int k=0;k<indices.size();k++){
 						a+=(double)nombreDePresenceLigne[indices.get(k)];
 						b+=(double)nombreDePresenceLigne[indices.get(k)];
-						c+=(double)14-nombreDePresenceLigne[indices.get(k)];
-						d+=(double)14-nombreDePresenceLigne[indices.get(k)];
+						c+=(double)m-nombreDePresenceLigne[indices.get(k)];
+						d+=(double)m-nombreDePresenceLigne[indices.get(k)];
 				}
 				a=a/((double)nombreTotalDePresence);
 				b=b/((double)nombreTotalDePresence);
@@ -371,137 +374,28 @@ public class CalculEntropie {
 		return true;
 	}
 	
-	/**
-	public void matriceEntropie(){
-
-		// Initialisation de la matrice
-		double S=0.0;
-		double T=0.0;
-		for(int i=1;i<=n;i++){
-			if(mbool[i][1]==0)
-				S=0.0;
-			else{
-				double q = prob.get(i)/nb_occ;
-				double x= (double)prob.get(i);
-				double y = mbool[i][1] * Math.log(mbool[i][1]/x);
-				double r = y/x;
-				S = q * r ;
+	public boolean arretCouvertureTotale(){
+		int[] presence = new int[m];
+		int somme=0;
+		
+		
+		for(int i =0;i<indices.size();i++)
+			for(int j=0;j<m;j++)
+				if(mint[indices.get(i)][j]==1)
+					presence[j]=1;
+		for(int i=0;i<m;i++)
+			somme+=presence[i];
+		if(somme==m){
+			System.out.println("Tous les évènements sont couverts");
+			return true;
 		}
-			if(prob.get(i)-mbool[i][1]==0)
-				T=0.0;
-			else{
-				double x = nb_occ - prob.get(i);
-				double z = x/nb_occ;
-				double q = (double)prob.get(i)-mbool[i][1];
-				double r = q * Math.log(q/prob.get(i));
-				double y = r/prob.get(i);
-				T = z * y;
-	}
-			entp[i][1]= S + T;
-		
-	}
-		// Construction  des autres colonnes de la matrice qui dependent des valeurs contenues dans entp[i-1][j-1]
-		
-		for(int j=2;j<=p;j++)
-			for(int i=1;i<=n;i++){
-				double Z=0;
-				double W=0;
-					if(mbool[i][j]==0)
-						W=0;
-					else{
-						double q = entp[i][j-1]/nb_occ;
-						double x= (double) prob.get(i);
-						double a = mbool[i][j] * Math.log(mbool[i][j]/x);
-						double y = a/x;
-						W = q * y;
-				}
-					if(prob.get(i)-mbool[i][j]==0)
-						Z=0;
-					else{
-						double x = nb_occ - entp[i][j-1];
-						double y = x/nb_occ;
-						double z = prob.get(i)-mbool[i][j];
-						double r = z * Math.log(z/prob.get(i));
-						double q = r/prob.get(i);
-						Z = y * q;
-			}
-					entp[i][j]= W + Z;
-				
-			}
-		
-	}
-
-	public void entropieListePersonne(){
-		for(int i=1;i<=this.n;i++){
-			double somme=0.0;
-			for(int j=1;j<=this.p;j++)
-				somme = somme + this.entp[i][j];
-			double l= (-1)*somme/Math.log(this.p);
-			double e = l/2;
-			this.dictionnaire.put(i, e);
-		}			
-				
-	}
-	
-	// Affichage de la matrice Ã  varibable booleene dans une fichier
-	public void afficherMatriceBooleene(){
-		Scanner entree = new Scanner(System.in);
-		System.out.println("Donner le repertoire oÃ¹ enregistrer le fichier contenant la matrice Ã  variable booleenne ");
-		String destination = entree.next();
-		entree.close();
-		try{
-			PrintWriter fichier = new PrintWriter(new FileWriter(destination));
-			fichier.println("******** Matrice Ã  variablebooleenne *************");
-			for(int i=1;i<=this.n;i++){
-				for(int j=1;j<=this.p;j++)
-					fichier.print(mbool[i][j]+"  ");
-			fichier.println();
-				
-			}
-			fichier.close();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-	}
-	
-	// Affichage de la matrice dans fichier.txt
-	public void afficherMatriceEnropie(){
-		Scanner entree = new Scanner(System.in);
-		System.out.println("Donner le repertoire oÃ¹ enregistrer le fichier contenant la matrice ");
-		String destination = entree.next();
-		entree.close();
-		try{
-			PrintWriter fichier = new PrintWriter(new FileWriter(destination));
-			fichier.println("****************** Matrice contenant l'entropie de chaque personne pour chaque variable j ****************");
-			for(int i=1;i<=this.n;i++){
-				for(int j=1;j<=this.p;j++)
-					fichier.print(entp[i][j]+"  ");	
-				fichier.println();
-		}
-			fichier.close();
-		
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	// Creation d'un fichier puis ecriture dans le fichier de la liste des personnes et l'entropie correspondant
-	// sur chaque ligne nous aurons la personne p(i) et l'entropie e(i).
-	
-	public void afficherEntropiePersonne(String destination){
-		try{
-			PrintWriter fichier = new PrintWriter(new FileWriter(destination));
-			fichier.println("*********************************Entropie d'une liste de personne***********************************");
-			for(int i=1;i<=this.n;i++)
-				fichier.println("p"+i+"   "+dictionnaire.get(i));
-			fichier.close();
 			
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		
-	}*/
+		else
+			return false;
+					
+						
+	}
+	
 	
 	public String afficherMatriceInt(int[][] mat){
 		String s = "";
