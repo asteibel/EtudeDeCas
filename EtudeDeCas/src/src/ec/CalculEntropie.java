@@ -147,7 +147,7 @@ public class CalculEntropie {
 		System.out.println("Calcul entropie personnes");
 		for(int i =0;i<m;i++){
 			if(nombreDePresenceColonne[i]==0)
-				tabEntropie[i]=0.5;
+				tabEntropie[i]=0;
 			else
 			{
 
