@@ -146,12 +146,19 @@ public class CalculEntropie {
 		double[] tabEntropie = new double[nombreDePresenceColonne.length];
 		System.out.println("Calcul entropie personnes");
 		for(int i =0;i<m;i++){
-			double p = (double)nombreDePresenceColonne[i];
-			double r = ((double)nombreDePresenceColonne[i])/nombreTotalDePresence;
-			double logr = Math.log10(r);
-			double plogr = p*logr/nombreTotalDePresence;
-			double logp = Math.log10(nombreDePresenceColonne.length);
-			tabEntropie[i]=-plogr/logp;
+			if(nombreDePresenceColonne[i]==0)
+				tabEntropie[i]=0.5;
+			else
+			{
+
+				double p = (double)nombreDePresenceColonne[i];
+				double r = ((double)nombreDePresenceColonne[i])/nombreTotalDePresence;
+				double logr = Math.log10(r);
+				double plogr = p*logr/nombreTotalDePresence;
+				double logp = Math.log10(nombreDePresenceColonne.length);
+
+				tabEntropie[i]=-plogr/logp;
+			}
 			}
 		System.out.println("Tableau de l'entropie des évènements");
 		System.out.println(afficherTableauDouble(tabEntropie));
