@@ -46,7 +46,7 @@ public class CalculEntropie {
 	private int[][] mint;
 	
 	/**
-	 * Tableau des indices des personnes gain max
+	 * Tableau des indices des personnes sélectionnées
 	 */
 	ArrayList<Integer> indices = new ArrayList<Integer>();
 	
@@ -103,9 +103,16 @@ public class CalculEntropie {
 		System.out.println(afficherTableauInt(nombreDePresenceLigne));
 		System.out.println(nombreTotalDePresence +" <= nombre total de présence");
 		
+		//On calcul l'entropie du système
 		calculEntropieColonneSysteme();
-		calculGainInfoMax();
+		//On détermine la personne avec le plus de gain d'information
+		calculGainInfo();
+		//On trouve la personne avec le plus de complémentarité avec la personne au gain max
 		complementarite();
+		
+		//A ce niveau, on a deux personnes sélectionnées.
+		//On fait alors le calcul de complémentarité qui rajoute une personne tant qu'aucune des 
+		//conditions d'arrêt n'est vérifiée
 		for(int i =1;i<n;i++)
 			if(!arret()&&!arretCouvertureTotale())
 				complementarite();
@@ -114,14 +121,16 @@ public class CalculEntropie {
 				break;
 			}
 				
-		
+		//On affiche les personnes sélectionnées
 		System.out.println("Personnes sélectionnées");
 		for(int i=0;i<indices.size();i++)
 			System.out.println(indices.get(i)+1);
 			
 			
 	}
-	
+	/**
+	 * Calcul de l'entropie du système en ligne
+	 */
 	public void calculEntropieLigneSysteme(){
 		double[] tabEntropie = new double[nombreDePresenceLigne.length];
 		System.out.println("Calcul entropie personnes");
@@ -141,10 +150,12 @@ public class CalculEntropie {
 			SSysteme+=tabEntropie[i];
 		System.out.println("Entropie système "+SSysteme);
 	}
-	
+	/**
+	 * Calcul de l'entropie du système en colonne
+	 */
 	public void calculEntropieColonneSysteme(){
 		double[] tabEntropie = new double[nombreDePresenceColonne.length];
-		System.out.println("Calcul entropie personnes");
+		System.out.println("Calcul entropie évènements");
 		for(int i =0;i<m;i++){
 			if(nombreDePresenceColonne[i]==0)
 				tabEntropie[i]=0;
@@ -169,7 +180,10 @@ public class CalculEntropie {
 		System.out.println("Entropie système "+SSysteme);
 	}
 	
-	public void calculGainInfoMax(){
+	/**
+	 * Calcul du gain d'information
+	 */
+	public void calculGainInfo(){
 		double[][] matGainP = new double[n][m];
 		double[][] matGainN = new double[n][m];
 		
@@ -187,9 +201,6 @@ public class CalculEntropie {
 					
 				}
 						}
-		System.out.println("Matrice des gains d'informations");
-		System.out.println(afficherMatriceDouble(matGainP));
-		System.out.println(afficherMatriceDouble(matGainN));
 		
 		double[] tabGainSommeP = new double[n];
 		double[] tabGainSommeN = new double[n];
@@ -210,6 +221,10 @@ public class CalculEntropie {
 		trouverMax(tabGain);
 	}
 	
+	/**
+	 * Détermine la personne avec le gain d'info max/la plus grande complémentarité et l'ajoute à indices, qui représente les personnes sélectionnées
+	 * @param tab
+	 */
 	public void trouverMax(double[] tab){
 		double max=0;
 		int indice=0;
@@ -224,9 +239,13 @@ public class CalculEntropie {
 		
 	}
 	
+	/**
+	 * Calcul de la complémentarité
+	 */
 	public void complementarite(){
 		System.out.println("Calcul de la complémentarité avec "+indices.size()+" personnes sélectionnées");
 		
+		//Les 8 matrices et tableaux nécessaires aux calculs
 		double[][] mat1 = new double[n][m];//p1 et pi
 		double[][] mat2 = new double[n][m];//non (pi et p1)
 		double[][] mat3 = new double[n][m];
@@ -244,11 +263,14 @@ public class CalculEntropie {
 		double[] tab7 = new double[n];
 		double[] tab8 = new double[n];
 		
+		//On initialise un nouveau tableau dans lequel mettre la complémentarité
 		tabComp = new double[n];
 		
 		for(int i =0;i<n;i++){
+			//On considère uniquement les personnes non sélectionnées
 			if(!indices.contains(i))
 				for(int j=0;j<m;j++){
+					//Définition des facteurs présents dans les calculs
 					double a=(double)mint[i][j];
 					double b=(double)nombreDePresenceLigne[i];
 					double c=(double)1-mint[i][j];
@@ -267,7 +289,7 @@ public class CalculEntropie {
 						g+=(double)1-mint[indices.get(k)][j];
 						h+=(double)m-nombreDePresenceLigne[indices.get(k)];
 					}
-					
+					//Si les personnes sélectionnées sont présentes à j et la personne i aussi
 					if(presence(indices,j)&&mint[i][j]==1){
 						mat1[i][j]=a*Math.log(a/b)/b;
 						mat2[i][j]=0;
@@ -276,6 +298,7 @@ public class CalculEntropie {
 						mat1[i][j]=0;
 						mat2[i][j]=(1-a/b)*Math.log(1-a/b);
 					}
+					//Si les personnes sélectionnées sont présentes à j mais pas la personne i 
 					if(presence(indices,j)&&mint[i][j]==0){
 						mat3[i][j]=c/(m+d)*Math.log(c/(m+d));
 						mat4[i][j]=0;
@@ -284,6 +307,7 @@ public class CalculEntropie {
 						mat3[i][j]=0;
 						mat4[i][j]=(1-c/(m+d))*Math.log(1-c/(m+d));
 					}
+					//Si les personnes sélectionnées ne sont pas présentes à j mais la personne i oui
 					if(mint[i][j]==1&&!presence(indices,j)){
 						mat5[i][j]=e/f*Math.log(e/f);
 						mat6[i][j]=0;
@@ -292,6 +316,7 @@ public class CalculEntropie {
 						mat5[i][j]=0;
 						mat6[i][j]=(1-e/f)*Math.log(1-e/f);						
 					}
+					//Si les personnes sélectionnées ne sont pas présentes à j et la personne i non plus
 					if(mint[i][j]==0&&!presence(indices,j)){
 						mat7[i][j]=(g/h)*Math.log(g/h);
 						mat8[i][j]=0;
@@ -331,37 +356,22 @@ public class CalculEntropie {
 				tab7[i]+=d*mat7[i][j]/Math.log(m);
 				tab8[i]+=(1-d)*mat8[i][j]/Math.log(m);
 			}
+			//On somme les 8 tableaux pour trouver les complémentarités
 			tabComp[i]=tab3[i]+tab4[i]+tab5[i]+tab6[i]-tab1[i]-tab2[i]-tab7[i]-tab8[i];
 			
 			}
 		
 		
-		/**
-		System.out.println(afficherMatriceDouble(mat1));
-		System.out.println("  ");
-		System.out.println(afficherMatriceDouble(mat2));
-		System.out.println("  ");
-		System.out.println(afficherMatriceDouble(mat3));
-		System.out.println("  ");
-		System.out.println(afficherMatriceDouble(mat4));
-
-		System.out.println(afficherMatriceDouble(mat5));
-		System.out.println("  ");
-		System.out.println(afficherMatriceDouble(mat6));
-		System.out.println("  ");
-		System.out.println(afficherMatriceDouble(mat7));
-		System.out.println("  ");
-		System.out.println(afficherMatriceDouble(mat8));
-		/**
-		System.out.println(afficherTableauDouble(tab5));
-		System.out.println(afficherTableauDouble(tab6));
-		System.out.println(afficherTableauDouble(tab7));
-		System.out.println(afficherTableauDouble(tab8));*/
-		
 		System.out.println(afficherTableauDouble(tabComp));
 		trouverMax(tabComp);
 	}
 	
+	/**
+	 * Retourne true que si toutes les personnes sélectionnées sont présentes à l'évènement j
+	 * @param indices Les personnes sélectionnées
+	 * @param j l'évènement à considérer
+	 * @return
+	 */
 	public boolean presence(ArrayList<Integer> indices,int j){
 		for(int i=0;i<indices.size();i++){
 				if(mint[indices.get(i)][j]==0)
@@ -381,17 +391,22 @@ public class CalculEntropie {
 		return true;
 	}
 	
+	/**
+	 * Détermine si la condition d'arrêt converture totale est vérifiée
+	 */
 	public boolean arretCouvertureTotale(){
 		int[] presence = new int[m];
 		int somme=0;
 		
-		
+		//Pour toutes les personnes sélectionnées, on met les évènements couverts dans presence
 		for(int i =0;i<indices.size();i++)
 			for(int j=0;j<m;j++)
 				if(mint[indices.get(i)][j]==1)
 					presence[j]=1;
+		//On fait la somme des évènements couverts
 		for(int i=0;i<m;i++)
 			somme+=presence[i];
+		//Si tous les évènements sont coverts, la somme vaut m 
 		if(somme==m){
 			System.out.println("Tous les évènements sont couverts");
 			return true;
@@ -403,6 +418,7 @@ public class CalculEntropie {
 						
 	}
 	
+	//__________ Méthodes pour afficher des tableaux/matrices dans la console_____________
 	
 	public String afficherMatriceInt(int[][] mat){
 		String s = "";

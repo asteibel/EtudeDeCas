@@ -29,7 +29,6 @@ public class TableauUI extends JFrame{
 	public TableauUI(){
 		super();
 		setTitle("Tableau des Evenements");
-		//setPreferredSize(new Dimension(500,400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		tab = new Tableau();
 		

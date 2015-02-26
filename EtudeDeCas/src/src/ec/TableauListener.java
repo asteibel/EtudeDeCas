@@ -5,6 +5,10 @@ import java.awt.event.MouseListener;
 
 import src.view.TableauUI;
 
+/**
+ * Listener pour le remplissage du tableau 
+ *
+ */
 public class TableauListener implements MouseListener{
 
 	int i;

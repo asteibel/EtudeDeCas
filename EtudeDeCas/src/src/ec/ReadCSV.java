@@ -22,20 +22,23 @@ public class ReadCSV {
 	}
 	
 	public int[][] run(){
-		String csvFile ="C:/Users/Audric/Desktop/data.csv";
 		BufferedReader br = null;
 		String line ="";
 		String split=";";
 		int[][] tab;
 		try{
+			
+			//Dans un premier temps, on fait une boucle pour connaître le 
+			//nombre de personnes et d'évènements afin d'initialiser le tableau
 			br = new BufferedReader(new FileReader(path));
 			int compteur = 1;
 			String[] personne = br.readLine().split(split);
 			while((line = br.readLine())!=null)
 				compteur++;				
 			tab = new int[compteur][personne.length];
+			br.close();
 			
-			
+			//Dans un second temps on rempli le tableau
 			br = new BufferedReader(new FileReader(path));
 			compteur = 0;
 			while((line = br.readLine())!=null){

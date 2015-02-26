@@ -26,7 +26,7 @@ public class FenetreMenu extends JFrame{
 	/**
 	 * Tableau affiché en ce moment
 	 */
-	TableauEvenement tabEv;
+	GestionTableaux gestion;
 	
 	FenetreMenu menu;
 	
@@ -58,10 +58,10 @@ public class FenetreMenu extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				//Main main = new Main();
-				fermerTabEv();
-				TableauEvenement test = new TableauEvenement();
-				tabEv = test.lancer();
-				lancerFenetreCalcul(tabEv);
+				fermerTabUI();
+				gestion = new GestionTableaux();
+				gestion = gestion.lancer();
+				lancerFenetreCalcul(gestion);
 				
 			}
 		});
@@ -79,20 +79,6 @@ public class FenetreMenu extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				
-				/**
-				
-				Scanner sc = new Scanner(System.in);
-				System.out.println("Combien y'a t'il de personnes?");
-				int n = sc.nextInt();
-				System.out.println("Combien y'a-t-il d'évènements?");
-				int m =sc.nextInt();
-				ReadCSV csv = new ReadCSV(n,m);
-				int[][] tab = csv.run();
-				
-				fermerTabEv();
-				TableauEvenement test = new TableauEvenement();
-				tabEv = test.lancerCSV(tab);
-				lancerFenetreCalcul(tabEv);*/
 				FenetreDrop drop = new FenetreDrop(menu);
 				
 			}
@@ -108,10 +94,10 @@ public class FenetreMenu extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				fermerTabEv();
-				TableauEvenement test = new TableauEvenement();
-				tabEv = test.lancerWE();
-				lancerFenetreCalcul(tabEv);
+				fermerTabUI();
+				gestion = new GestionTableaux();
+				gestion = gestion.lancerWE();
+				lancerFenetreCalcul(gestion);
 			}
 		});
 		this.add(bWE,bl.WEST);
@@ -121,18 +107,18 @@ public class FenetreMenu extends JFrame{
 	/**
 	 * Ferme la fenêtre du tableau des évènements
 	 */
-	public void fermerTabEv(){
-		if (tabEv!=null){
-			tabEv.fermerTabEv();
+	public void fermerTabUI(){
+		if (gestion!=null){
+			gestion.fermerTabUI();
 		}
 	}
 
 	/**
 	 * Ouvre la fenêtre de calcul
-	 * @param tabEv Tableau sur lequel faire les calculs
+	 * @param gestion Tableau sur lequel faire les calculs
 	 */
-	public void lancerFenetreCalcul(TableauEvenement tabEv){
-		FenetreCalcul fCalcul = new FenetreCalcul(tabEv);
+	public void lancerFenetreCalcul(GestionTableaux gestion){
+		FenetreCalcul fCalcul = new FenetreCalcul(gestion);
 		fCalcul.setVisible(true);
 	}
 	

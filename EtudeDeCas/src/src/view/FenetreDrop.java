@@ -18,6 +18,10 @@ import javax.swing.SwingConstants;
 
 import src.ec.ReadCSV;
 
+/**
+ * 
+ *Fenetre gérant le drag and drop pour charger un csv
+ */
 public class FenetreDrop extends JFrame{
 	
 	String path;;
@@ -67,11 +71,11 @@ public class FenetreDrop extends JFrame{
 		            }
 		            ReadCSV csv = new ReadCSV(path);
 		            
-		            menu.fermerTabEv();
-		            TableauEvenement tabEv = new TableauEvenement();
-		            tabEv=tabEv.lancerCSV(csv.run());
-		            menu.lancerFenetreCalcul(tabEv);
-		            FenetreAfficherTableau afficherTab = new FenetreAfficherTableau(tabEv);
+		            menu.fermerTabUI();
+		            GestionTableaux gestion = new GestionTableaux();
+		            gestion=gestion.lancerCSV(csv.run());
+		            menu.lancerFenetreCalcul(gestion);
+		            FenetreAfficherTableau afficherTab = new FenetreAfficherTableau(gestion);
 		            
 			}
 			

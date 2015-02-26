@@ -9,14 +9,18 @@ import javax.swing.JFrame;
 
 import src.ec.CalculEntropie;
 
+/**
+ * Fenetre pour lancer le calcul
+ *
+ */
 public class FenetreCalcul extends JFrame{
 	
-	TableauEvenement tabEv;
+	GestionTableaux gestion;
 	
-	public FenetreCalcul(TableauEvenement tabEv){
+	public FenetreCalcul(GestionTableaux gestion){
 		super();
 		
-		this.tabEv=tabEv;
+		this.gestion=gestion;
 		
 		setTitle("Fenetre de calcul");
 		setPreferredSize(new Dimension(200,150));
@@ -35,7 +39,7 @@ public class FenetreCalcul extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				System.out.println("Lancement du calcul!!");
-				CalculEntropie calcul = new CalculEntropie(tabEv.getTabUI().getTab());
+				CalculEntropie calcul = new CalculEntropie(gestion.getTabUI().getTab());
 				
 			}
 		});

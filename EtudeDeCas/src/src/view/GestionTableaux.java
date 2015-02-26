@@ -2,7 +2,11 @@ package src.view;
 
 import java.util.Scanner;
 
-public class TableauEvenement {
+/**
+ * Gestion des différentes fenetres
+ *
+ */
+public class GestionTableaux {
 
 	static TableauUI tabUI = new TableauUI();
 
@@ -13,7 +17,7 @@ public class TableauEvenement {
 	static String[] listeEvenements;
 	
 
-	public TableauEvenement lancer() {
+	public GestionTableaux lancer() {
 		// TODO Auto-ge1erated method stub
 
 		
@@ -29,14 +33,12 @@ public class TableauEvenement {
 		tabUI.paint();
 		tabUI.setVisible(true);
 	}
-	public TableauEvenement lancerCSV(int[][] tab){
+	public GestionTableaux lancerCSV(int[][] tab){
 		tabUI.chargerCSV(tab);
-		//tabUI.paint();
-		//tabUI.setVisible(true);
 		return this;
 	}
 	
-	public TableauEvenement lancerWE(){
+	public GestionTableaux lancerWE(){
 		tabUI.chargerWE();
 		tabUI.paint();
 		tabUI.setVisible(true);
@@ -68,7 +70,7 @@ public class TableauEvenement {
 		tabUI.getTab().setListeIndividus(listeIndividus);
 	}
 	
-	public void fermerTabEv(){
+	public void fermerTabUI(){
 		tabUI.dispose();
 		tabUI = new TableauUI();
 	}
@@ -78,7 +80,7 @@ public class TableauEvenement {
 	}
 
 	public static void setTabUI(TableauUI tabUI) {
-		TableauEvenement.tabUI = tabUI;
+		GestionTableaux.tabUI = tabUI;
 	}
 
 	public static int getN() {
@@ -86,7 +88,7 @@ public class TableauEvenement {
 	}
 
 	public static void setN(int n) {
-		TableauEvenement.n = n;
+		GestionTableaux.n = n;
 	}
 
 	public static String[] getListeIndividus() {
@@ -94,7 +96,7 @@ public class TableauEvenement {
 	}
 
 	public static void setListeIndividus(String[] listeIndividus) {
-		TableauEvenement.listeIndividus = listeIndividus;
+		GestionTableaux.listeIndividus = listeIndividus;
 	}
 
 	public static int getM() {
@@ -102,7 +104,7 @@ public class TableauEvenement {
 	}
 
 	public static void setM(int m) {
-		TableauEvenement.m = m;
+		GestionTableaux.m = m;
 	}
 
 	public static String[] getListeEvenements() {
@@ -110,7 +112,7 @@ public class TableauEvenement {
 	}
 
 	public static void setListeEvenements(String[] listeEvenements) {
-		TableauEvenement.listeEvenements = listeEvenements;
+		GestionTableaux.listeEvenements = listeEvenements;
 	}
 	
 }

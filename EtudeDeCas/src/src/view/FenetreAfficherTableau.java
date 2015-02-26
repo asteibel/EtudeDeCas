@@ -7,13 +7,17 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+/**
+ * Fenetre avec le bouton pour afficher le tableau
+ *
+ */
 public class FenetreAfficherTableau extends JFrame{
 
-	TableauEvenement tabEv;
+	GestionTableaux gestion;
 	
-	public FenetreAfficherTableau(TableauEvenement tabEv){
+	public FenetreAfficherTableau(GestionTableaux gestion){
 		super();
-		this.tabEv=tabEv;
+		this.gestion=gestion;
 		setPreferredSize(new Dimension(200,150));
 		boutonAfficher();
 		pack();
@@ -28,7 +32,7 @@ public class FenetreAfficherTableau extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				tabEv.afficherTableau();
+				gestion.afficherTableau();
 				setVisible(false);
 			}
 		});
